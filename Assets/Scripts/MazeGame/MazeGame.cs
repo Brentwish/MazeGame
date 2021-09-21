@@ -6,18 +6,16 @@ using UnityEngine.Tilemaps;
 public class MazeGame : MonoBehaviour {
     public int width;
     public int height;
-    private Tilemap board;
+    private GameBoard board;
 
     void Awake() {
-        board = GetComponentInChildren<Tilemap>();
+        board = GetComponentInChildren<GameBoard>();
     }
 
     void Start() {
-        Debug.Log("What is good, my brethren");
-        // Instantiate(board, transform.position, Quaternion.identity);
+        board.RenderMap();
     }
 
     void Update() {
-        
     }
 }

@@ -162,7 +162,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e85aabce46a228249ab91435abeb83cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  followTransform: {fileID: 578311673}
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -213,11 +212,11 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 5, z: -10}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 578311673}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &578311671
@@ -279,12 +278,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 3625043607559282579, guid: 0d267bc78a0864eb48358689b29ed20a, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Sprite: {fileID: -2413806693520163455, guid: 4adeaf2d2b1c7417e89f026626d8264f, type: 3}
+  m_Color: {r: 0.14449976, g: 0.18455464, b: 0.9339623, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 0.5}
+  m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -297,12 +296,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 578311671}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.0240142, y: -0.085281156, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 2.35, y: 1.63, z: 0}
+  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
+  m_Children:
+  - {fileID: 519420032}
+  m_Father: {fileID: 816509631}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &578311674
 MonoBehaviour:
@@ -366,9 +366,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e591c2d611269c4dac4c2a9561d2fd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  board: {fileID: 1454267341}
-  width: 10
-  height: 10
+  width: 25
+  height: 25
 --- !u!4 &816509631
 Transform:
   m_ObjectHideFlags: 0
@@ -379,9 +378,11 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 578311673}
+  - {fileID: 1343459144}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1343459142
 GameObject:
@@ -394,7 +395,7 @@ GameObject:
   - component: {fileID: 1343459144}
   - component: {fileID: 1343459143}
   m_Layer: 0
-  m_Name: Grid
+  m_Name: Board
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -408,9 +409,9 @@ Grid:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1343459142}
   m_Enabled: 1
-  m_CellSize: {x: 0.84, y: 0.493, z: 1}
+  m_CellSize: {x: 1, y: 1, z: 1}
   m_CellGap: {x: 0, y: 0, z: 0}
-  m_CellLayout: 2
+  m_CellLayout: 0
   m_CellSwizzle: 0
 --- !u!4 &1343459144
 Transform:
@@ -419,13 +420,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1343459142}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1454267342}
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_Father: {fileID: 816509631}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1454267341
 GameObject:
@@ -440,7 +441,7 @@ GameObject:
   - component: {fileID: 1454267344}
   - component: {fileID: 1454267343}
   m_Layer: 0
-  m_Name: MazeTileMap
+  m_Name: MazeTilemap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -472,9 +473,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed25a11e92c912547b22922d081bcf5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mazeTile: {fileID: 11400000, guid: 8a05d0aa8c5fd7f41a6deececf11461b, type: 2}
-  width: 100
-  height: 100
+  mazeTile: {fileID: 11400000, guid: bfa002c735ee52940a19b54334f3b42c, type: 2}
 --- !u!483693784 &1454267344
 TilemapRenderer:
   m_ObjectHideFlags: 0

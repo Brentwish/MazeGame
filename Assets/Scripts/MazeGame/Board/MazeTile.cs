@@ -6,22 +6,20 @@ using UnityEngine.Tilemaps;
 public class MazeTile : TileBase
 {
     public string type;
-    public Sprite[] mazeTiles;
+    public Sprite sprite;
 
-    // Start is called before the first frame update
     void Start()
     {
         Debug.Log("New tile: ", this);
     }
 
-    // Update is called once per frame
     void Update()
     {
 
     }
 
-    void OnCollisionEnter2D(Collision2D other)
+    public override void GetTileData(Vector3Int position, ITilemap tilemap, ref TileData tileData)
     {
-        Debug.Log("Collision with " + other.gameObject);
+        tileData.sprite = sprite;
     }
 }
