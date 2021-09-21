@@ -36,9 +36,10 @@ public class GameBoard : MonoBehaviour
 
     private Tile CreateRandomTile() {
         Tile t = Instantiate(mazeTile);
-        t.color = Random.value > 0.5f ? Color.black : Color.white;
+        bool isWall = Random.value > 0.5f;
+        t.color = isWall ? Color.black : Color.white;
+        t.colliderType = isWall ? Tile.ColliderType.Grid : Tile.ColliderType.None;
 
-        t.color = new Color(Random.value, Random.value, Random.value);
         return t;
     }
 }
