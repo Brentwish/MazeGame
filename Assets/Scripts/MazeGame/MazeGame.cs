@@ -6,7 +6,7 @@ using UnityEngine.Tilemaps;
 public class MazeGame : MonoBehaviour {
     public int width;
     public int height;
-    private GameBoard board;
+    public GameBoard board;
 
     void Awake() {
         board = GetComponentInChildren<GameBoard>();
@@ -14,8 +14,5 @@ public class MazeGame : MonoBehaviour {
 
     void Start() {
         board.RenderMap();
-    }
-
-    void Update() {
     }
 }

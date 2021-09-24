@@ -5,13 +5,12 @@ using UnityEngine.Tilemaps;
 
 public class GameBoard : MonoBehaviour
 {
-    public Tile mazeTile;
-    private Tilemap board;
     private MazeGame game;
+    public Tilemap tilemap;
 
     void Awake() {
         game = GetComponentInParent<MazeGame>();
-        board = this.GetComponent<Tilemap>();
+        tilemap = this.GetComponent<Tilemap>();
     }
 
     void Start()
@@ -29,17 +28,16 @@ public class GameBoard : MonoBehaviour
             for (int y = 0; y < this.game.height; y++)
             {
                 Tile t = CreateRandomTile();
-                this.board.SetTile(new Vector3Int(x, y, 0), t);
+                tilemap.SetTile(new Vector3Int(x, y, 0), t);
             }
         }
     }
 
     private Tile CreateRandomTile() {
-        Tile t = Instantiate(mazeTile);
         bool isWall = Random.value > 0.5f;
-        t.color = isWall ? Color.black : Color.white;
-        t.colliderType = isWall ? Tile.ColliderType.Grid : Tile.ColliderType.None;
+        MazeTile t = ScriptableObject.CreateInstance<MazeTile>();
+        t.type = isWall ? TileType.Wall : TileType.Hall;
 
-        return t;
+        return (Tile)t;
     }
 }

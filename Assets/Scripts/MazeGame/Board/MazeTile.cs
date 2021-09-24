@@ -3,23 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class MazeTile : TileBase
+public enum TileType { Wall, Hall }
+
+public class MazeTile : Tile
 {
-    public string type;
-    public Sprite sprite;
-
-    void Start()
-    {
-        Debug.Log("New tile: ", this);
-    }
-
-    void Update()
-    {
-
-    }
+    public TileType type;
 
     public override void GetTileData(Vector3Int position, ITilemap tilemap, ref TileData tileData)
     {
-        tileData.sprite = sprite;
+        base.GetTileData(position, tilemap, ref tileData);
+        tileData.sprite = Resources.Load<Sprite>("Square");
+        tileData.color = type == TileType.Wall ? Color.black : Color.white;
     }
 }
