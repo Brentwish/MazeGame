@@ -8,29 +8,21 @@ public class GameBoard : MonoBehaviour
     private MazeGame game;
     public Tilemap tilemap;
     public Vector2 startPos;
+    public Vector2 endPos;
     private SortedSet<MazeTile> halls;
     private SortedSet<MazeTile> guaranteedHalls;
-    private Vector2[] dirs = { new Vector2(0, 1), new Vector2(1, 0), new Vector2(0, -1), new Vector2(-1, 0) };
-    
 
     void Awake() {
         game = GetComponentInParent<MazeGame>();
         tilemap = this.GetComponent<Tilemap>();
-        startPos = pickStartPos();
+    }
+
+    public void createMap()
+    {
+        setStartAndEndPos();
         halls = new SortedSet<MazeTile>(new MazeTile.MazeTileComparer());
         guaranteedHalls = new SortedSet<MazeTile>(new MazeTile.MazeTileComparer());
-    }
 
-    void Start()
-    {
-    }
-
-    void Update()
-    {
-    }
-
-    public void RenderMap()
-    {
         switch (game.mazeType)
         {
             case MazeType.Random:
@@ -68,24 +60,20 @@ public class GameBoard : MonoBehaviour
             }
             next = advanceWalk(walk, remaining);
             if (halls.Contains(next)) {
-                Debug.Log("Adding tiles from walk");
                 walk.Add(next);
-                foreach (MazeTile tile in walk) {
+                foreach (MazeTile tile in walk)
                     commitHall(tile, remaining);
-                }
                 walk.Clear();
-            } else if (next == null) {
+            } else if (next == null)
                 walk.Clear();
-            } else if (walk.Contains(next)) {
-                Debug.Log("walk looped back");
+            else if (walk.Contains(next))
                 walk = walk.GetRange(0, Mathf.Max(0, walk.IndexOf(next) - 1));
-            } else {
-                Debug.Log("else");
+            else
                 walk.Add(next);
-            }
-
-            Debug.Log("remaining: " + remaining.Count);
         }
+
+        MazeTile end = tileAt(endPos);
+        commitHall(end, remaining);
     }
 
     private void commitHall(MazeTile tile, SortedSet<MazeTile> remaining) {
@@ -117,7 +105,7 @@ public class GameBoard : MonoBehaviour
     }
 
     private SortedSet<MazeTile> initBoard() {
-        SortedSet<MazeTile> acc = new SortedSet<MazeTile>(new MazeTile.MazeTileComparer());
+        SortedSet<MazeTile> remaining = new SortedSet<MazeTile>(new MazeTile.MazeTileComparer());
 
         for (int x = 0; x < this.game.width; x++)
         {
@@ -133,11 +121,11 @@ public class GameBoard : MonoBehaviour
 
                 // Exclude edge tiles from initial working set
                 if (!isEdge(pos))
-                    acc.Add(t);
+                    remaining.Add(t);
             }
         }
 
-        return acc;
+        return remaining;
     }
 
     private MazeTile pickWalkStart(SortedSet<MazeTile> s) {
@@ -152,25 +140,31 @@ public class GameBoard : MonoBehaviour
         return this.game.board.tilemap.GetTile<MazeTile>(Vector3Int.RoundToInt(pos)); 
     }
 
-    private Vector2 pickStartPos() {
+    private void setStartAndEndPos() {
         if (Random.value > 0.5f) {
-            if (Random.value > 0.5f)
-                return new Vector2(0, randOddInRange(this.game.height));
-
-            return new Vector2(this.game.width - 1, randOddInRange(this.game.height));
+            if (Random.value > 0.5f) {
+                startPos = new Vector2(0, randOddInRange(this.game.height));
+                endPos = new Vector2(this.game.width - 1, randOddInRange(this.game.height));
+            } else {
+                startPos = new Vector2(this.game.width - 1, randOddInRange(this.game.height));
+                endPos = new Vector2(0, randOddInRange(this.game.height));
+            }
+        } else {
+            if (Random.value > 0.5f) {
+                startPos = new Vector2(randOddInRange(this.game.width), 0);
+                endPos = new Vector2(randOddInRange(this.game.width), this.game.height - 1);
+            } else {
+                startPos = new Vector2(randOddInRange(this.game.width), this.game.height - 1);
+                endPos = new Vector2(randOddInRange(this.game.width), 0);
+            }
         }
-
-        if (Random.value > 0.5f)
-            return new Vector2(randOddInRange(this.game.width), 0);
-
-        return new Vector2(randOddInRange(this.game.width), this.game.height - 1);
     }
 
     private MazeTile pickAdjacentTile(MazeTile t, SortedSet<MazeTile> s) {
-        List<Vector2> attempts = new List<Vector2>(dirs);
+        List<Vector2> attempts = new List<Vector2>() { new Vector2(0, 1), new Vector2(1, 0), new Vector2(0, -1), new Vector2(-1, 0) };
         for (int i = 4; i > 0; i--)
         {
-            int wat = (int)Random.value * i;
+            int wat = (int)(Random.value * i);
             Vector2 dir = attempts[wat];
             attempts.RemoveAt(wat);
             MazeTile adjacentTile = tileAt(t.position + dir);

@@ -10,12 +10,20 @@ public class MazeGame : MonoBehaviour {
     public int height;
     public GameBoard board;
     public MazeType mazeType;
+    private Player mainPlayer;
 
     void Awake() {
         board = GetComponentInChildren<GameBoard>();
+        mainPlayer = GetComponentInChildren<Player>();
     }
 
     void Start() {
-        board.RenderMap();
+        board.createMap();
+        mainPlayer.setPosition(board.startPos);
+    }
+
+    public void handleGameEnd() {
+        board.createMap();
+        mainPlayer.setPosition(board.startPos);
     }
 }

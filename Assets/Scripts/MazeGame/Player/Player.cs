@@ -11,12 +11,9 @@ public class Player : MonoBehaviour
     private float vertical;
     private MazeGame game;
     
-    void Start()
-    {
+    void Start() {
         game = GetComponentInParent<MazeGame>();
-        Vector3Int startTilePos = game.board.tilemap.WorldToCell(game.board.startPos);
-        transform.position = game.board.tilemap.GetCellCenterWorld(startTilePos);
-        movePoint.position = transform.position;
+        setPosition(game.board.startPos);
     }
 
     void Update() {
@@ -33,6 +30,14 @@ public class Player : MonoBehaviour
         Vector3 temp = movePoint.position;
         transform.position = Vector2.MoveTowards(transform.position, movePoint.position, speed * Time.deltaTime);
         movePoint.position = temp;
+
+        Vector3Int pos = game.board.tilemap.WorldToCell(transform.position);
+        MazeTile t = game.board.tilemap.GetTile<MazeTile>(pos);
+
+        if (Vector2.Distance(t.position, game.board.endPos) < 0.05f) {
+            game.handleGameEnd();
+            setPosition(game.board.startPos);
+        }
 
         if (Vector2.Distance(transform.position, movePoint.position) < 0.05f)
         {
@@ -56,5 +61,11 @@ public class Player : MonoBehaviour
             return false;
 
         return true;
+    }
+
+    public void setPosition(Vector2 pos) {
+        Vector3Int tilePos = game.board.tilemap.WorldToCell(pos);
+        transform.position = game.board.tilemap.GetCellCenterWorld(tilePos);
+        movePoint.position = transform.position;
     }
 }
