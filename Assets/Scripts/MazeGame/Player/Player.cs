@@ -14,7 +14,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         game = GetComponentInParent<MazeGame>();
-        Vector3Int startTilePos = game.board.tilemap.WorldToCell(new Vector3(1, 0, 0));
+        Vector3Int startTilePos = game.board.tilemap.WorldToCell(game.board.startPos);
         transform.position = game.board.tilemap.GetCellCenterWorld(startTilePos);
         movePoint.position = transform.position;
     }
