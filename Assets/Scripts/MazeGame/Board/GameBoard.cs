@@ -9,7 +9,7 @@ public class GameBoard : MonoBehaviour
     public Tilemap tilemap;
     public Vector2 startPos;
     public Vector2 endPos;
-    private SortedSet<MazeTile> halls;
+    public SortedSet<MazeTile> halls;
     private SortedSet<MazeTile> guaranteedHalls;
 
     void Awake() {
