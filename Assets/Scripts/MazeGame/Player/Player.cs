@@ -13,7 +13,6 @@ public class Player : MonoBehaviour
     
     void Start() {
         game = GetComponentInParent<MazeGame>();
-        setPosition(game.board.startPos);
     }
 
     void Update() {
@@ -36,7 +35,6 @@ public class Player : MonoBehaviour
 
         if (Vector2.Distance(t.position, game.board.endPos) < 0.05f) {
             game.handleGameEnd();
-            setPosition(game.board.startPos);
         }
 
         if (Vector2.Distance(transform.position, movePoint.position) < 0.05f)
@@ -49,6 +47,8 @@ public class Player : MonoBehaviour
                     movePoint.position += dir;
             }
         }
+
+        game.board.tilemap.RefreshAllTiles();
     }
     
     private bool canMoveInDir(Vector3 dir) {

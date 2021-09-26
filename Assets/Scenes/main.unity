@@ -189,7 +189,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 8
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -278,7 +278,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: -2413806693520163455, guid: 4adeaf2d2b1c7417e89f026626d8264f, type: 3}
+  m_Sprite: {fileID: 7482667652216324306, guid: c8b6e3ca1b10cb8468508ac90f775cf8, type: 3}
   m_Color: {r: 0.14449976, g: 0.18455464, b: 0.9339623, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -374,10 +374,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e591c2d611269c4dac4c2a9561d2fd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 17
-  height: 17
+  width: 25
+  height: 25
   numberOfHallWalkers: 13
   board: {fileID: 0}
+  makeMazeImpossible: 0
   mazeType: 1
   hallWalkerPrefab: {fileID: 3677380014562967964, guid: 9a93d1084f048e045bcefbbc745f33a0, type: 3}
 --- !u!4 &816509631

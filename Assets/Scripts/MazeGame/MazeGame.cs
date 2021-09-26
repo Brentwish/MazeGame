@@ -10,6 +10,7 @@ public class MazeGame : MonoBehaviour {
     public int height;
     public int numberOfHallWalkers;
     public GameBoard board;
+    public bool makeMazeImpossible;
     public MazeType mazeType;
     private Player mainPlayer;
     private GameObject[] hallWalkers;

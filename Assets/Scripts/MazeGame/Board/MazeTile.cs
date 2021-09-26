@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public enum TileType { Wall, Hall }
+public enum TileType { Wall, Hall, Closet, Teleporter }
 
 public class MazeTile : Tile
 {
@@ -14,7 +14,16 @@ public class MazeTile : Tile
     {
         base.GetTileData(position, tilemap, ref tileData);
         tileData.sprite = Resources.Load<Sprite>("Square");
-        tileData.color = type == TileType.Wall ? Color.black : Color.white;
+
+        if (type == TileType.Wall) {
+            tileData.color = Color.black;
+        } else if (type == TileType.Hall) {
+            tileData.color = Color.white;
+        } else if (type == TileType.Closet) {
+            tileData.color = Color.grey;
+        } else if (type == TileType.Teleporter) {
+            tileData.color = Color.cyan;
+        }
     }
 
     public class MazeTileComparer : IComparer<MazeTile> 

@@ -52,6 +52,12 @@ public class GameBoard : MonoBehaviour
         commitHall(start, remaining);
         next = pickAdjacentTile(start, guaranteedHalls);
         commitHall(next, remaining);
+        if (game.makeMazeImpossible) {
+            start = this.tileAt(endPos);
+            commitHall(start, remaining);
+            next = pickAdjacentTile(start, guaranteedHalls);
+            commitHall(next, remaining);
+        }
 
         while(remaining.Count > 0) {
             if (walk.Count == 0) {
@@ -131,7 +137,7 @@ public class GameBoard : MonoBehaviour
     private MazeTile pickWalkStart(SortedSet<MazeTile> s) {
         SortedSet<MazeTile> pickSet = new SortedSet<MazeTile>(new MazeTile.MazeTileComparer());
         pickSet.UnionWith(s);
-        s.IntersectWith(guaranteedHalls);
+        pickSet.IntersectWith(guaranteedHalls);
 
         return Random.value > 0.5f ? pickSet.Min : pickSet.Max;
     }
