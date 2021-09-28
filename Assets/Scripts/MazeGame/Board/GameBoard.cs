@@ -10,36 +10,31 @@ public class GameBoard : MonoBehaviour
     public Vector2 startPos;
     public Vector2 endPos;
     public SortedSet<MazeTile> halls;
+    public SortedSet<MazeTile> closetTiles;
     private SortedSet<MazeTile> guaranteedHalls;
+    private SortedSet<MazeTile> teleporters;
 
     void Awake() {
         game = GetComponentInParent<MazeGame>();
         tilemap = this.GetComponent<Tilemap>();
+        halls = new SortedSet<MazeTile>(new MazeTile.MazeTileComparer());
+        guaranteedHalls = new SortedSet<MazeTile>(new MazeTile.MazeTileComparer());
+        teleporters = new SortedSet<MazeTile>(new MazeTile.MazeTileComparer());
+
+        if (game.width % 2 == 0 || game.height % 2 == 0)
+            throw new System.Exception("Width and height must be odd");
     }
 
     public void createMap()
     {
+        halls.Clear();
+        guaranteedHalls.Clear();
+        teleporters.Clear();
+        tilemap.ClearAllTiles();
         setStartAndEndPos();
-        halls = new SortedSet<MazeTile>(new MazeTile.MazeTileComparer());
-        guaranteedHalls = new SortedSet<MazeTile>(new MazeTile.MazeTileComparer());
-
-        switch (game.mazeType)
-        {
-            case MazeType.Random:
-                generateRandomBoard();
-                break;
-
-            case MazeType.Wilsons:
-                if (game.width % 2 == 0 || game.height % 2 == 0)
-                    throw new System.Exception("Width and height must be odd");
-                generateMaze();
-                break;
-            
-            default:
-                generateRandomBoard();
-                break;
-        }
-
+        generateMaze();
+        createClosetTiles();
+        createTeleporters();
         tilemap.RefreshAllTiles();
     }
 
@@ -78,8 +73,72 @@ public class GameBoard : MonoBehaviour
                 walk.Add(next);
         }
 
-        MazeTile end = tileAt(endPos);
-        commitHall(end, remaining);
+        commitHall(tileAt(endPos), remaining);
+    }
+
+    private void createClosetTiles() {
+        this.closetTiles = getClosetTiles();
+
+        foreach (MazeTile tile in this.closetTiles) {
+            MazeTile adj = adjacentHalls(tile).Min;
+            tile.type = TileType.Closet;
+            tile.pair = adj;
+            adj.type = TileType.Closet;
+            adj.pair = tile;
+        }
+    }
+
+    private void createTeleporters() {
+        List<MazeTile> validTeleporterTiles = new List<MazeTile>(getValidTeleporterTiles());
+        if (validTeleporterTiles.Count < 2)
+            return;
+        int i;
+        List<float> dists = new List<float>(validTeleporterTiles.Count);
+        for (int j = 0; j < game.numberOfTeleporters && validTeleporterTiles.Count > 1; j++) {
+            i = 0;
+            validTeleporterTiles.Shuffle();
+            dists.Clear();
+            MazeTile teleporter = validTeleporterTiles[0];
+            foreach(MazeTile t2 in validTeleporterTiles) {
+                dists.Add(Vector2.Distance(teleporter.position, t2.position));
+                i++;
+            }
+            // Pick the one that is furthest away
+            MazeTile pair = validTeleporterTiles[dists.IndexOf(Mathf.Max(dists.ToArray()))];
+            teleporter.pairTeleporters(pair);
+            validTeleporterTiles.Remove(teleporter);
+            validTeleporterTiles.Remove(pair);
+        }
+    }
+
+    private SortedSet<MazeTile> getValidTeleporterTiles() {
+        SortedSet<MazeTile> validTeleporters = getLeafTiles();
+        validTeleporters.ExceptWith(this.closetTiles);
+
+        return validTeleporters;
+    }
+
+    private SortedSet<MazeTile> getClosetTiles() {
+        SortedSet<MazeTile> closetTiles = getLeafTiles();
+        SortedSet<MazeTile> adjacentClosetTiles = new SortedSet<MazeTile>(new MazeTile.MazeTileComparer());
+
+        // Get all the leaf tiles and remove those that don't have a T intersection 2 tiles away.
+        closetTiles.RemoveWhere(t => {
+            MazeTile adj1 = adjacentHalls(t).Min;
+            SortedSet<MazeTile> adj2 = adjacentHalls(adj1);
+            adj2.Remove(t);
+            return adjacentHalls(adj2.Min).Count < 3;
+        });
+
+        return closetTiles;
+    }
+
+    private SortedSet<MazeTile> getLeafTiles() {
+        SortedSet<MazeTile> leafTiles = new SortedSet<MazeTile>(new MazeTile.MazeTileComparer());
+        leafTiles.UnionWith(guaranteedHalls);
+        leafTiles.RemoveWhere(t => adjacentHalls(t).Count > 1);
+
+        return leafTiles;
     }
 
     private void commitHall(MazeTile tile, SortedSet<MazeTile> remaining) {
@@ -119,11 +178,9 @@ public class GameBoard : MonoBehaviour
             {
                 Vector2 pos = new Vector2(x, y);
                 TileType type = x % 2 == 0 || y % 2 == 0 ? TileType.Wall : TileType.Hall;
-                MazeTile t = CreateTile(type);
-                t.position = pos;
+                MazeTile t = CreateTile(type, pos);
                 if (type == TileType.Hall)
                     guaranteedHalls.Add(t);
-                tilemap.SetTile(new Vector3Int(x, y, 0), (Tile)t);
 
                 // Exclude edge tiles from initial working set
                 if (!isEdge(pos))
@@ -182,26 +239,23 @@ public class GameBoard : MonoBehaviour
         return null;
     }
 
-    private int randOddInRange(int max) {
-        return 1 + 2*(int)(Random.value * 0.5f*(max - 2));
+    private SortedSet<MazeTile> adjacentTiles(MazeTile tile) {
+        List<Vector2> dirs = new List<Vector2> { new Vector2(0, 1), new Vector2(1, 0), new Vector2(0, -1), new Vector2(-1, 0) };
+        List<MazeTile> adjTiles = dirs.ConvertAll<MazeTile>(dir => tileAt(tile.position + dir));
+        adjTiles.RemoveAll(t => t == null);
+
+        return new SortedSet<MazeTile>(adjTiles, new MazeTile.MazeTileComparer());
     }
 
-    private void generateRandomBoard() {
-        for (int x = 0; x < this.game.width; x++)
-        {
-            for (int y = 0; y < this.game.height; y++)
-            {
-                TileType type;
-                if (isEdge(new Vector2(x, y)))
-                    type = TileType.Wall;
-                else {
-                    bool isWall = Random.value > 0.5f;
-                    type = isWall ? TileType.Wall : TileType.Hall;
-                }
-                MazeTile t = CreateTile(type);
-                tilemap.SetTile(new Vector3Int(x, y, 0), (Tile)t);
-            }
-        }
+    private SortedSet<MazeTile> adjacentHalls(MazeTile tile) {
+        SortedSet<MazeTile> adjTiles = adjacentTiles(tile);
+        adjTiles.RemoveWhere(t => t.type != TileType.Hall && t.type != TileType.Closet);
+
+        return adjTiles;
+    }
+
+    private int randOddInRange(int max) {
+        return 1 + 2*(int)(Random.value * 0.5f*(max - 2));
     }
 
     private bool isEdge(Vector2 pos) {
@@ -213,9 +267,11 @@ public class GameBoard : MonoBehaviour
         return false;
     }
 
-    private MazeTile CreateTile(TileType type) {
+    private MazeTile CreateTile(TileType type, Vector2 pos) {
         MazeTile t = ScriptableObject.CreateInstance<MazeTile>();
         t.type = type;
+        t.position = pos;
+        tilemap.SetTile(Vector3Int.RoundToInt(pos), (Tile)t);
 
         return t;
     }

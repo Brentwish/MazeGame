@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public enum MazeType { Random, Wilsons }
-
 public class MazeGame : MonoBehaviour {
     public int width;
     public int height;
     public int numberOfHallWalkers;
     public GameBoard board;
     public bool makeMazeImpossible;
-    public MazeType mazeType;
+    public int numberOfTeleporters;
     private Player mainPlayer;
     private GameObject[] hallWalkers;
     public GameObject hallWalkerPrefab;
@@ -23,12 +21,16 @@ public class MazeGame : MonoBehaviour {
     }
 
     void Start() {
+        numberOfTeleporters = getNumberOfTeleporters();
         board.createMap();
         mainPlayer.setPosition(board.startPos);
         initHallWalkers();
     }
 
     public void handleGameEnd() {
+        width += 2;
+        height += 2;
+        numberOfTeleporters = getNumberOfTeleporters();
         board.createMap();
         mainPlayer.setPosition(board.startPos);
         initHallWalkers();
@@ -49,5 +51,9 @@ public class MazeGame : MonoBehaviour {
             hallWalker.name = "HallWalker" + (i + 1);
             hallWalkers[i] = hallWalker;
         }
+    }
+
+    private int getNumberOfTeleporters() {
+        return (int)((width * height) / (4*(width + height)));
     }
 }

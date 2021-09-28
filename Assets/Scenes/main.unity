@@ -189,7 +189,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 8
+  orthographic size: 12
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -317,7 +317,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f37b71e869246384f8df5f4da63e2981, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
+  speed: 9
   movePoint: {fileID: 2092528861}
 --- !u!61 &578311676
 BoxCollider2D:
@@ -374,12 +374,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e591c2d611269c4dac4c2a9561d2fd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 25
-  height: 25
+  width: 27
+  height: 15
   numberOfHallWalkers: 13
   board: {fileID: 0}
   makeMazeImpossible: 0
-  mazeType: 1
+  numberOfTeleporters: 0
   hallWalkerPrefab: {fileID: 3677380014562967964, guid: 9a93d1084f048e045bcefbbc745f33a0, type: 3}
 --- !u!4 &816509631
 Transform:

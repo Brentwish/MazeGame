@@ -42,30 +42,42 @@ public class Player : MonoBehaviour
             if (Mathf.Abs(horizontal) == 1f || Mathf.Abs(vertical) == 1f) 
             {
                 Vector3 dir = new Vector3(horizontal, vertical, 0f);
+                Vector3Int newPos = game.board.tilemap.WorldToCell(movePoint.position + dir);
+                MazeTile newT = game.board.tilemap.GetTile<MazeTile>(newPos);
 
-                if (canMoveInDir(dir))
-                    movePoint.position += dir;
+                if (newT != null) {
+                    switch (newT.type) {
+                        case TileType.Teleporter:
+                            setPosition(newT.pair.position);
+                            break;
+                        case TileType.Closet:
+                            if (t.type == TileType.Closet) {
+                                setPosition(newT.position, false);
+                                newT.occupied = false;
+                            }
+                            else {
+                                setPosition(newT.pair.position, false);
+                                newT.occupied = true;
+                            }
+                            break;
+                        case TileType.Wall:
+                            break;
+                        case TileType.Hall:
+                            movePoint.position += dir;
+                            break;
+                    }
+                }
             }
         }
 
         game.board.tilemap.RefreshAllTiles();
     }
-    
-    private bool canMoveInDir(Vector3 dir) {
-        Vector3Int pos = game.board.tilemap.WorldToCell(movePoint.position + dir);
-        MazeTile t = game.board.tilemap.GetTile<MazeTile>(pos);
 
-        if (t == null)
-            return false;
-        if (t.type == TileType.Wall)
-            return false;
-
-        return true;
-    }
-
-    public void setPosition(Vector2 pos) {
+    public void setPosition(Vector2 pos, bool instantly = true) {
         Vector3Int tilePos = game.board.tilemap.WorldToCell(pos);
-        transform.position = game.board.tilemap.GetCellCenterWorld(tilePos);
-        movePoint.position = transform.position;
+        Vector2 tileCenter = game.board.tilemap.GetCellCenterWorld(tilePos);
+        if (instantly)
+            transform.position = tileCenter;
+        movePoint.position = tileCenter;
     }
 }
